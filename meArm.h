@@ -1,5 +1,6 @@
 /* meArm library York Hack Space May 2014
  * A simple control library for Phenoptix' meArm
+
  * Usage:
  *   meArm arm;
  *   arm.begin(1, 10, 9, 6);
