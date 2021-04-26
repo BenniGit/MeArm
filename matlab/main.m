@@ -3,7 +3,11 @@ clear all port
 clc
 close all
 
-meArm arm;
+arm = MeArm('D3','D5','D6','D9');
+
 
 arm.openGripper();
-arm.closegripper();
+pause(3);
+arm.closeGripper();
+pause(3);
+
