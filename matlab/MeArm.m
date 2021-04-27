@@ -103,14 +103,14 @@ classdef MeArm
             fprintf('position_gripper: %d \n', current_pos_gripper);
         end
         
-        function closeGripper(obj, angle)
-            writePosition(obj.gripper, angle);
-            pause(0.03);
+        function closeGripper(obj)
+            writePosition(obj.gripper, 0.1);
+            pause(0.3);
         end
         
         function openGripper(obj)
-            writePosition(obj.gripper,1);
-                        pause(0.03);
+            writePosition(obj.gripper,0.5);
+                        pause(0.3);
         end
     end
 end

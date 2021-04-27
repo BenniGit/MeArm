@@ -3,25 +3,85 @@ clear all port
 clc
 close all
 
-arm = MeArm('D3','D5','D6','D9');
+% arm = MeArm('D3','D5','D6','D9');
+% 
+%   arm.openGripper();
+%   arm.closeGripper();
+%   arm.openGripper();
+%   arm.closeGripper();
 
-  arm.openGripper();
-  arm.closeGripper();
-  arm.openGripper();
-  arm.closeGripper();
-  arm.openGripper();
-  pause(0.5);
-  %%Go up and left to grab something
-  arm.goDirectlyTo(-80,100,140); 
-  arm.closeGripper();
-  %%Go down, forward and right to drop it
-  arm.goDirectlyTo(70,200,10);
-  arm.openGripper();
-  %%Back to start position
-  arm.goDirectlyTo(0,100,50);
-  delay(2000);
+%   pause(0.5);
+%   %%Go up and left to grab something
+%   arm.goToPoint(-80,100,140); 
+%   arm.closeGripper();
+%   %%Go down, forward and right to drop it
+%   arm.goToPoint(70,200,10);
+%   arm.openGripper();
+%   %%Back to start position
+%   arm.goToPoint(0,100,50);
+%   pause(0.5);
 
-% s = Servo();
-% s.move(0.9);
+port='COM5';
+board='Uno';          
+a = arduino(port, board,'libraries','servo');
+
+gripper = Servo('D9', a);
+shoulder = Servo('D6', a);
+elbow = Servo('D5', a);
+base = Servo('D4', a);
+
+% %% test gripper - working
+% gripper.move(0.5); %open
+% fprintf('gripper open \n');
 % pause(1);
-% s.move(0.4);
+% gripper.move(0.1); %close
+% fprintf('gripper closed \n');
+% pause(1);
+% 
+% %% test shoulder -working
+% gripper.move(0.5); % open
+% fprintf('open');
+% shoulder.move(0.8); %down
+% pause(5); % wait
+% gripper.move(0.1); % close
+% fprintf('close');
+% pause(5);
+% %slowly up
+% for angle = 0.8:-0.05:0.5
+%     shoulder.move(angle); %open
+%     fprintf(' %f \n', angle);
+%     fprintf('up \n');
+%     pause(1);
+% end
+% 
+% % slowly down
+% for angle = 0.5:0.05:0.8
+%     shoulder.move(angle); %open
+%     fprintf(' %f \n', angle);
+%     fprintf('down \n');
+%     pause(1);
+% end
+% gripper.move(0.5); % open
+% 
+%% elbow test
+shoulder.move(0.5); %up
+for angle = 1:-0.05:0.6
+    elbow.move(angle); %open
+    fprintf(' elbow : %f \n', angle);
+    pause(1);
+end
+shoulder.move(0.8); %down
+for angle = 0.8:-0.05:0.5
+    elbow.move(angle); %open
+    fprintf('elbow: %f \n', angle);
+    pause(1);
+end
+% 
+% % base-test
+% shoulder.move(0.8); % up
+% elbow.move(0.8); % up
+% for angle = 1:-0.05:0
+%     base.move(angle); %open
+%     fprintf(' %f \n', angle);
+%     pause(1);
+% end
