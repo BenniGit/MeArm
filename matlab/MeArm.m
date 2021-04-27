@@ -18,26 +18,26 @@ classdef MeArm
         shoulder_zero
         elbow_gain
         elbow_zero
-        %% Base
-        sweepMinBase=145;
-        sweepMaxBase=49;
-        angleMinBase=-pi/4;
-        angleMaxBase=pi/4;
-        %% Shoulder
-        sweepMinShoulder=118;
-        sweepMaxShoulder=22;
-        angleMinShoulder=pi/4;
-        angleMaxShoulder=3*pi/4;
-        %% Elbow
-        sweepMinElbow=144;
-        sweepMaxElbow=36;
-        angleMinElbow=pi/4;
-        angleMaxElbow=-pi/4;
-        %% Gripper
-        sweepMinGripper=75;
-        sweepMaxGripper=115;
-        angleMinGripper=pi/2;
-        angleMaxGripper=0;
+%         %% Base
+%         sweepMinBase=145;
+%         sweepMaxBase=49;
+%         angleMinBase=-pi/4;
+%         angleMaxBase=pi/4;
+%         %% Shoulder
+%         sweepMinShoulder=118;
+%         sweepMaxShoulder=22;
+%         angleMinShoulder=pi/4;
+%         angleMaxShoulder=3*pi/4;
+%         %% Elbow
+%         sweepMinElbow=144;
+%         sweepMaxElbow=36;
+%         angleMinElbow=pi/4;
+%         angleMaxElbow=-pi/4;
+%         %% Gripper
+%         sweepMinGripper=75;
+%         sweepMaxGripper=115;
+%         angleMinGripper=pi/2;
+%         angleMaxGripper=0;
     end
     
     methods
@@ -52,13 +52,13 @@ classdef MeArm
             obj.shoulder = servo(a, pinShoulder, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.elbow = servo(a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.gripper = servo(a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
-            %% get gain and zero 
-            obj.base_gain, obj.base_zero = get_gain_and_zero(obj.sweepMinBase, obj.sweepMaxBase, obj.angleMinBase, obj.angleMaxBase);
-            obj.shoulder_gain, obj.shoulder_zero = get_gain_and_zero(obj.sweepMinShoulder, obj.sweepMaxShoulder, obj.angleMinShoulder, obj.angleMaxShoulder);
-            obj.elbow_gain, obj.elbow_zero = get_gain_and_zero(obj.sweepMinElbow, obj.sweepMaxElbow, obj.angleMinElbow, obj.angleMaxElbow);
+%             %% get gain and zero 
+%             obj.base_gain, obj.base_zero = get_gain_and_zero(obj.sweepMinBase, obj.sweepMaxBase, obj.angleMinBase, obj.angleMaxBase);
+%             obj.shoulder_gain, obj.shoulder_zero = get_gain_and_zero(obj.sweepMinShoulder, obj.sweepMaxShoulder, obj.angleMinShoulder, obj.angleMaxShoulder);
+%             obj.elbow_gain, obj.elbow_zero = get_gain_and_zero(obj.sweepMinElbow, obj.sweepMaxElbow, obj.angleMinElbow, obj.angleMaxElbow);
             %% first move
-            goDirectlyTo(obj, 0, 100, 50)
-            openGripper(obj)
+            obj.goDirectlyTo(0, 100, 50);
+            obj.openGripper();
         end
         
         function move = goDirectlyTo(obj,x, y, z)
@@ -89,9 +89,9 @@ classdef MeArm
             dist = sqrt((obj.x-x)*(obj.x-x)+(obj.y-y)*(obj.y-y)+(obj.z-z)*(obj.y-z));
             step = 10;
             for i = 0:step:dist
-                goDirectlyTo(obj.x + (x-obj.x)*i/dist, obj.y + (y-obj.y) * i/dist, obj.z + (z-obj.x) * i/dist)
+                obj.goDirectlyTo(obj.x + (x-obj.x)*i/dist, obj.y + (y-obj.y) * i/dist, obj.z + (z-obj.x) * i/dist)
             end
-            goDirectlyTo(x, y, z)
+            obj.goDirectlyTo(x, y, z)
             % check position
             current_pos_base = readPosition(obj.base);
             fprintf('position_base: %d \n', current_pos_base);
@@ -103,13 +103,13 @@ classdef MeArm
             fprintf('position_gripper: %d \n', current_pos_gripper);
         end
         
-        function closeGripper(obj)
-            writePosition(obj.gripper,0.8);
+        function closeGripper(obj, angle)
+            writePosition(obj.gripper, angle);
             pause(0.03);
         end
         
         function openGripper(obj)
-            writePosition(obj.gripper,0.3);
+            writePosition(obj.gripper,1);
                         pause(0.03);
         end
     end
