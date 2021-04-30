@@ -9,8 +9,8 @@ classdef MeArm
         shoulder
         elbow
         gripper
-        x
-        y
+        r
+        phi
         z
         base_gain
         base_zero
@@ -57,18 +57,18 @@ classdef MeArm
 %             obj.shoulder_gain, obj.shoulder_zero = get_gain_and_zero(obj.sweepMinShoulder, obj.sweepMaxShoulder, obj.angleMinShoulder, obj.angleMaxShoulder);
 %             obj.elbow_gain, obj.elbow_zero = get_gain_and_zero(obj.sweepMinElbow, obj.sweepMaxElbow, obj.angleMinElbow, obj.angleMaxElbow);
             %% first move
-            obj.goDirectlyTo(0, 100, 50);
+            obj.goDirectlyTo(100, 0, 50);
             obj.openGripper();
         end
         
-        function move = goDirectlyTo(obj,x, y, z)
+        function move = goDirectlyTo(obj,r, phi, z)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             move = 1;
-            obj.x = x;
-            obj.y = y;
+            obj.r = r;
+            obj.phi = phi;
             obj.z = z;
-            [is_reachable, radBase, radShoulder, radElbow] = solve(x,y,z);
+            [is_reachable, radBase, radShoulder, radElbow] = solve(r,phi,z);
             if is_reachable
 %                 writePosition(obj.base, angle2pwm(radBase, obj.base_gain, obj.base_zero))
 %                 writePosition(obj.shoulder, angle2pwm(radShoulder, obj.shoulder_gain, obj.shoulder_zero))
@@ -83,15 +83,20 @@ classdef MeArm
             end
         end
         
-        function goToPoint(obj,x, y, z)
+        function goToPoint(obj,r, phi, z)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
-            dist = sqrt((obj.x-x)*(obj.x-x)+(obj.y-y)*(obj.y-y)+(obj.z-z)*(obj.y-z));
+            r0 = obj.r;
+            phi0 = obj.phi;
+            z0 = obj.z;
+            distr = (r0-r);
+            distphi = (phi0-phi);
+            distz = (z0-z);
             step = 10;
             for i = 0:step:dist
-                obj.goDirectlyTo(obj.x + (x-obj.x)*i/dist, obj.y + (y-obj.y) * i/dist, obj.z + (z-obj.x) * i/dist)
+                obj.goDirectlyTo(r0 + (r-r0)*i/distr, phi0 + (phi-phi0) * i/distphi, z0 + (z-z0) * i/distz)
             end
-            obj.goDirectlyTo(x, y, z)
+            obj.goDirectlyTo(r, phi, z)
             % check position
             current_pos_base = readPosition(obj.base);
             fprintf('position_base: %d \n', current_pos_base);
