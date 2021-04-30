@@ -3,5 +3,6 @@ function val = angle2val(angle)
 
 val = angle/pi;
 val = abs(val);
+fprintf('angle: %d \n', val);
 end
 

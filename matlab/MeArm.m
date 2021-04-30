@@ -12,32 +12,6 @@ classdef MeArm
         r
         phi
         z
-        base_gain
-        base_zero
-        shoulder_gain
-        shoulder_zero
-        elbow_gain
-        elbow_zero
-%         %% Base
-%         sweepMinBase=145;
-%         sweepMaxBase=49;
-%         angleMinBase=-pi/4;
-%         angleMaxBase=pi/4;
-%         %% Shoulder
-%         sweepMinShoulder=118;
-%         sweepMaxShoulder=22;
-%         angleMinShoulder=pi/4;
-%         angleMaxShoulder=3*pi/4;
-%         %% Elbow
-%         sweepMinElbow=144;
-%         sweepMaxElbow=36;
-%         angleMinElbow=pi/4;
-%         angleMaxElbow=-pi/4;
-%         %% Gripper
-%         sweepMinGripper=75;
-%         sweepMaxGripper=115;
-%         angleMinGripper=pi/2;
-%         angleMaxGripper=0;
     end
     
     methods
@@ -52,10 +26,6 @@ classdef MeArm
             obj.shoulder = servo(a, pinShoulder, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.elbow = servo(a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.gripper = servo(a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
-%             %% get gain and zero 
-%             obj.base_gain, obj.base_zero = get_gain_and_zero(obj.sweepMinBase, obj.sweepMaxBase, obj.angleMinBase, obj.angleMaxBase);
-%             obj.shoulder_gain, obj.shoulder_zero = get_gain_and_zero(obj.sweepMinShoulder, obj.sweepMaxShoulder, obj.angleMinShoulder, obj.angleMaxShoulder);
-%             obj.elbow_gain, obj.elbow_zero = get_gain_and_zero(obj.sweepMinElbow, obj.sweepMaxElbow, obj.angleMinElbow, obj.angleMaxElbow);
             %% first move
             obj.goDirectlyTo(100, 0, 50);
             obj.openGripper();
@@ -73,13 +43,19 @@ classdef MeArm
 %                 writePosition(obj.base, angle2pwm(radBase, obj.base_gain, obj.base_zero))
 %                 writePosition(obj.shoulder, angle2pwm(radShoulder, obj.shoulder_gain, obj.shoulder_zero))
 %                 writePosition(obj.elbow, angle2pwm(radElbow,obj.elbow_gain, obj.elbow_zero))
-                
+                fprintf('radbase: %d \n', radBase);
+                fprintf('radShoulder: %d \n', radShoulder);
+                fprintf('radElbow: %d \n', radElbow);
                 writePosition(obj.base, angle2val(radBase))
-                writePosition(obj.shoulder, angle2val(radShoulder))
-                writePosition(obj.elbow, angle2val(radElbow))
+                fprintf('Value_base: %d \n', angle2val(radBase));
+                writePosition(obj.shoulder, 0.5+angle2val(radShoulder))
+                fprintf('Value_Shoulder: %d \n', angle2val(radShoulder));
+                writePosition(obj.elbow, 0.5+angle2val(radElbow))
+                fprintf('Value_Elbow: %d \n', angle2val(radElbow));
                 pause(0.05)
             else
                 move = 0;
+                fprintf('out of reach \n');
             end
         end
         
@@ -89,12 +65,13 @@ classdef MeArm
             r0 = obj.r;
             phi0 = obj.phi;
             z0 = obj.z;
-            distr = (r0-r);
-            distphi = (phi0-phi);
-            distz = (z0-z);
             step = 10;
-            for i = 0:step:dist
-                obj.goDirectlyTo(r0 + (r-r0)*i/distr, phi0 + (phi-phi0) * i/distphi, z0 + (z-z0) * i/distz)
+            distr = (r0-r)/step;
+            distphi = (phi0-phi)/step;
+            distz = (z0-z)/step;
+            step = 10;
+            for i = 0:step
+                obj.goDirectlyTo(r0 + i*distr, phi0 + i*distphi, z0 + i*distz)
             end
             obj.goDirectlyTo(r, phi, z)
             % check position
