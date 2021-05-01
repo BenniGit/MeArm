@@ -17,7 +17,7 @@ elseif (a2<0)
     aEL = 0;
     fprintf('AngleElbow is smaller then zero  %d \n',a2');
 else
-    aEL = a1;
+    aEL = a2;
 end
 
 end

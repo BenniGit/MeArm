@@ -26,10 +26,13 @@ if (bool == 0)
     a2 = nan;
 else
     a0 = phi;
+    fprintf('Base Angle in solve method %d \n',a0);
+  
     a1 = phiB + phiSHI;
     a2 = pi - a1 - phi12;
-    
     [a1,a2] = correctangles(a1,a2);
+end
+
 
     
 end

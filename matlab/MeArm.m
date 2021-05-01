@@ -9,9 +9,9 @@ classdef MeArm
         shoulder
         elbow
         gripper
-        r
-        phi
-        z
+        r = 50;
+        phi = pi/2;
+        z = 40;
     end
     
     methods
@@ -27,8 +27,8 @@ classdef MeArm
             obj.elbow = servo(a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.gripper = servo(a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             %% first move
-            obj.goDirectlyTo(100, 0, 50);
-            obj.openGripper();
+            obj.goToPoint(50, pi/2, 40);
+            %obj.openGripper();
         end
         
         function move = goDirectlyTo(obj,r, phi, z)
@@ -44,14 +44,10 @@ classdef MeArm
 %                 writePosition(obj.shoulder, angle2pwm(radShoulder, obj.shoulder_gain, obj.shoulder_zero))
 %                 writePosition(obj.elbow, angle2pwm(radElbow,obj.elbow_gain, obj.elbow_zero))
                 fprintf('radbase: %d \n', radBase);
-                fprintf('radShoulder: %d \n', radShoulder);
-                fprintf('radElbow: %d \n', radElbow);
                 writePosition(obj.base, angle2val(radBase))
                 fprintf('Value_base: %d \n', angle2val(radBase));
                 writePosition(obj.shoulder, 0.5+angle2val(radShoulder))
-                fprintf('Value_Shoulder: %d \n', angle2val(radShoulder));
                 writePosition(obj.elbow, 0.5+angle2val(radElbow))
-                fprintf('Value_Elbow: %d \n', angle2val(radElbow));
                 pause(0.05)
             else
                 move = 0;
@@ -65,12 +61,17 @@ classdef MeArm
             r0 = obj.r;
             phi0 = obj.phi;
             z0 = obj.z;
-            step = 10;
-            distr = (r0-r)/step;
-            distphi = (phi0-phi)/step;
-            distz = (z0-z)/step;
-            step = 10;
-            for i = 0:step
+            step = 20;
+            distr = (r-r0)/step;
+            distphi = (phi-phi0)/step;
+            distz = (z-z0)/step;
+            fprintf('r0 = %d \n',r0);
+            fprintf('with a distr = %d \n',distr);
+            fprintf('phi0 = %d',phi0);
+            fprintf('with a distphi = %d \n',distphi);
+            fprintf('z0 = %d',z0);
+            fprintf('with a distz = %d \n',distz);
+            for i = 1:step
                 obj.goDirectlyTo(r0 + i*distr, phi0 + i*distphi, z0 + i*distz)
             end
             obj.goDirectlyTo(r, phi, z)
