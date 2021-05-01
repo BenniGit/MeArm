@@ -28,9 +28,8 @@ else
     a0 = phi;
     a1 = phiB + phiSHI;
     a2 = pi - a1 - phi12;
-    if (a1>pi/2 || a2>pi/2)
-        bool = 0;
-    end
+    
+    [a1,a2] = correctangles(a1,a2);
 
     
 end
