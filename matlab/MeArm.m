@@ -95,6 +95,19 @@ classdef MeArm
             writePosition(obj.gripper,0.5);
                         pause(0.3);
         end
+        
+        function [r, phi, z] = get_position(obj, j1, j2, j3)
+            j = [j1 j2 j3 0;0 0 0 0;0 80 80 68; pi/2 0 0 0];
+            fprintf(' anfangsradius:');
+            FK = DHkine(j);
+            obj.r
+            [x0,y0] = polar2cart(obj.r,obj.phi);
+            Q = FK*[x0; y0; obj.z;1];
+            x = Q(1);
+            y = Q(2);
+            z = Q(3);
+            [r,phi] = cart2polar(x,y);
+        end
     end
 end
 

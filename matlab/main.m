@@ -4,6 +4,7 @@ clc
 close all
 
 arm = MeArm('D4','D5','D6','D9');
+[r, phi, z] = arm.get_position(pi/4, 0, 0)
 
 %   arm.openGripper();
 %   arm.closeGripper();
