@@ -5,13 +5,13 @@ classdef MeArm
     properties
         minPulse = 5.44e-04;
         maxPulse = 2.40e-03;
-        base
-        shoulder
-        elbow
-        gripper
-        r = 50;
-        phi = pi/2;
-        z = 40;
+        base;
+        shoulder;
+        elbow;
+        gripper;
+        r
+        phi
+        z
     end
     
     methods
@@ -26,8 +26,11 @@ classdef MeArm
             obj.shoulder = servo(a, pinShoulder, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.elbow = servo(a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.gripper = servo(a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
+            obj.r = 50;
+            obj.phi = pi/2;
+            obj.z = 40;
             %% first move
-            obj.goToPoint(50, pi/2, 40);
+            %obj.goToPoint(50, pi/2, 40);
             %obj.openGripper();
         end
         
@@ -35,20 +38,21 @@ classdef MeArm
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             move = 1;
-            obj.r = r;
-            obj.phi = phi;
-            obj.z = z;
+%             obj.r = r;
+%             obj.phi = phi;
+%             obj.z = z;
             [is_reachable, radBase, radShoulder, radElbow] = solve(r,phi,z);
             if is_reachable
 %                 writePosition(obj.base, angle2pwm(radBase, obj.base_gain, obj.base_zero))
 %                 writePosition(obj.shoulder, angle2pwm(radShoulder, obj.shoulder_gain, obj.shoulder_zero))
 %                 writePosition(obj.elbow, angle2pwm(radElbow,obj.elbow_gain, obj.elbow_zero))
-                fprintf('radbase: %d \n', radBase);
+                %fprintf('radbase: %d \n', radBase);
                 writePosition(obj.base, angle2val(radBase))
-                fprintf('Value_base: %d \n', angle2val(radBase));
+                %fprintf('Value_base: %d \n', angle2val(radBase));
                 writePosition(obj.shoulder, 0.5+angle2val(radShoulder))
                 writePosition(obj.elbow, 0.5+angle2val(radElbow))
                 pause(0.05)
+                [obj.r,obj.phi,obj.z] = obj.read_position();
             else
                 move = 0;
                 fprintf('out of reach \n');
@@ -74,16 +78,16 @@ classdef MeArm
             for i = 1:step
                 obj.goDirectlyTo(r0 + i*distr, phi0 + i*distphi, z0 + i*distz)
             end
-            obj.goDirectlyTo(r, phi, z)
+            
             % check position
-            current_pos_base = readPosition(obj.base);
-            fprintf('position_base: %d \n', current_pos_base);
-            current_pos_shoulder = readPosition(obj.shoulder);
-            fprintf('position_shoulder: %d \n', current_pos_shoulder);
-            current_pos_elbow = readPosition(obj.elbow);
-            fprintf('position_elbow: %d \n', current_pos_elbow);
-            current_pos_gripper = readPosition(obj.gripper);
-            fprintf('position_gripper: %d \n', current_pos_gripper);
+            %current_pos_base = readPosition(obj.base);
+            %fprintf('position_base: %d \n', current_pos_base);
+            %current_pos_shoulder = readPosition(obj.shoulder);
+            %fprintf('position_shoulder: %d \n', current_pos_shoulder);
+            %current_pos_elbow = readPosition(obj.elbow);
+            %fprintf('position_elbow: %d \n', current_pos_elbow);
+            %current_pos_gripper = readPosition(obj.gripper);
+            %fprintf('position_gripper: %d \n', current_pos_gripper);
         end
         
         function closeGripper(obj)
@@ -108,6 +112,17 @@ classdef MeArm
             z = Q(3);
             [r,phi] = cart2polar(x,y);
         end
+        
+        function [r,phi,z] = read_position(obj)
+            a0 = readPosition(obj.base);
+            fprintf('a0 = %d \n',a0);
+            a1 = readPosition(obj.shoulder);
+            fprintf('a1 = %d \n',a1);
+            a2 = readPosition(obj.elbow);
+            fprintf('a2 = %d \n',a2);
+            [r,phi,z] = unsolve(a0,a1,a2);
+        end
+        
     end
 end
 

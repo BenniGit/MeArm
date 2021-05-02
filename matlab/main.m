@@ -4,7 +4,29 @@ clc
 close all
 
 arm = MeArm('D4','D5','D6','D9');
-[r, phi, z] = arm.get_position(pi/4, 0, 0)
+[r, phi, z] = arm.get_position(0,0, pi/4)
+% pause(1);
+% arm.goToPoint(60,pi,80);
+% 
+% arm.goDirectlyTo(40,0,30);
+% pause(1);
+% [r,phi,z] = arm.read_position()
+% pause(1);
+% for i = 1:10
+arm.goDirectlyTo(80,pi/2,50);
+%     [r,phi,z] = arm.read_position()
+%     pause(1);
+% end
+pause(2);
+[r, phi, z] = arm.get_position(pi/4,0, 0);
+arm.goDirectlyTo(r,phi,z);
+pause(2);
+[r, phi, z] = arm.get_position(0, pi/4,0);
+arm.goDirectlyTo(r,phi,z);
+pause(2);
+[r, phi, z] = arm.get_position(0, 0, pi/4);
+arm.goDirectlyTo(r,phi,z);
+%arm.goToPoint(r,phi,z);
 
 %   arm.openGripper();
 %   arm.closeGripper();

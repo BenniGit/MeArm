@@ -1,4 +1,4 @@
-function [x,y,z] = unsolve(a0,a1,a2)
+function [r,phi,z] = unsolve(a0,a1,a2)
 %UNSOLVE
 %INPUT:
 %a1,a2,a3 = angles of servos
@@ -9,6 +9,10 @@ L1=80; %Shoulder to elbow length
 L2=80; %elbow to wrise length
 L3=68; %Length from wrist to hand PLUS base centre to shoulder
 
+a0 = a0*pi;
+a1 = a1*pi-pi/2;
+a2 = a2*pi-pi/2;
+
 %% Main
 
 %transform with shoulder and elbow angle
@@ -16,10 +20,8 @@ L3=68; %Length from wrist to hand PLUS base centre to shoulder
 [u12,v12] = polar2cart(L2,a2);
 
 %sum up all u and all v values
-u = u01 + u12 + L3;
-v = v01 + v12;
+r = u01 + u12 + L3;
+z = abs(v01) - abs(v12);
 
-% Consider Base angle - x/y is reversal!
-[y,x] = polar2cart(u,a0);
-z = v;
+phi = a0;
 

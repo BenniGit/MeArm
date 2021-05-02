@@ -14,9 +14,22 @@ elbow = Servo('D5', a);
 base = Servo('D4', a);
 
 %% starting position
-shoulder.move(0.7);
-elbow.move(0.7);
+shoulder.move(1);
+elbow.move(1);
 base.move(1);
+
+base.read()
+elbow.read()
+shoulder.read()
+% pause(1);
+% shoulder.move(0.5);
+% elbow.move(0.75);
+% base.move(1);
+% 
+% pause(1);
+% shoulder.move(0.25);
+% elbow.move(0.5);
+% base.move(1);
 
 
 % %% test gripper - working
@@ -37,15 +50,16 @@ base.move(1);
 % fprintf('gripper closed and wait\n');
 % pause(5);
 % %slowly up
-% for angle = 0.8:-0.05:0.5
+% for angle = 0.8:-0.05:0.3
 %     shoulder.move(angle); %open
+%     elbow.move(1-angle);
 %     fprintf('shoulder: %f \n', angle);
 %     fprintf('up \n');
 %     pause(1);
 % end
 % 
 % % slowly down
-% for angle = 0.5:0.05:0.8
+% for angle = 0.3:0.05:0.8
 %     shoulder.move(angle); %open
 %     fprintf('shoulder: %f \n', angle);
 %     fprintf('down \n');
@@ -70,14 +84,14 @@ base.move(1);
 %     fprintf('elbow: %f \n', angle);
 %     pause(1);
 % end
-
-% base-test
-shoulder.move(0.5); % up
-fprintf('shoulder up \n');
-elbow.move(0.8); % up
-fprintf('elbow up \n');
-for angle = 1:-0.05:0
-    base.move(angle); %open
-    fprintf('base: %f \n', angle);
-    pause(1);
-end
+% 
+% % base-test
+% shoulder.move(0.5); % up
+% fprintf('shoulder up \n');
+% elbow.move(0.8); % up
+% fprintf('elbow up \n');
+% for angle = 1:-0.05:0
+%     base.move(angle); %open
+%     fprintf('base: %f \n', angle);
+%     pause(1);
+% end

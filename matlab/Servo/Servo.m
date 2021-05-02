@@ -20,6 +20,10 @@ classdef Servo
             %   Detailed explanation goes here
             writePosition(obj.servo, position);
         end
+        
+        function value = read(obj)
+            value = readPosition(obj.servo);
+        end
     end
 end
 

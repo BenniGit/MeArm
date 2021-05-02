@@ -26,7 +26,7 @@ if (bool == 0)
     a2 = nan;
 else
     a0 = phi;
-    fprintf('Base Angle in solve method %d \n',a0);
+    %fprintf('Base Angle in solve method %d \n',a0);
   
     a1 = phiB + phiSHI;
     a2 = pi - a1 - phi12;
