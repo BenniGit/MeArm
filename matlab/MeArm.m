@@ -101,16 +101,17 @@ classdef MeArm
         end
         
         function [r, phi, z] = get_position(obj, j1, j2, j3)
-            j = [j1 j2 j3 0;0 0 0 0;0 80 80 68; pi/2 0 0 0];
-            fprintf(' anfangsradius:');
+%             j = [j1 j2 j3 0;0 0 0 0;0 80 80 68; pi/2 0 0 0];
+            j = [j1 j2 j3 -(j2+j3);0 0 0 0;0 80 80 68; pi/2 0 0 0];
             FK = DHkine(j);
-            obj.r
-            [x0,y0] = polar2cart(obj.r,obj.phi);
-            Q = FK*[x0; y0; obj.z;1];
+            Q = FK(:,4);
             x = Q(1);
             y = Q(2);
             z = Q(3);
             [r,phi] = cart2polar(x,y);
+            writePosition(obj.base,angle2val(j1));
+            writePosition(obj.shoulder,0.5+angle2val(j2));
+            writePosition(obj.elbow,1-angle2val(j2)-angle2val(j3));
         end
         
         function [r,phi,z] = read_position(obj)

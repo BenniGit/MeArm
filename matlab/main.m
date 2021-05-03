@@ -17,15 +17,33 @@ arm.goDirectlyTo(80,pi/2,50);
 %     [r,phi,z] = arm.read_position()
 %     pause(1);
 % end
-pause(2);
-[r, phi, z] = arm.get_position(pi/4,0, 0);
+% pause(2);
+% [r, phi, z] = arm.get_position(pi/4,0, 0);
+% arm.goDirectlyTo(r,phi,z);
+% pause(2);
+% [r, phi, z] = arm.get_position(0, pi/4,0);
+% arm.goDirectlyTo(r,phi,z);
+[r, phi, z] = arm.get_position(pi/4,pi/4,pi/4);
 arm.goDirectlyTo(r,phi,z);
-pause(2);
-[r, phi, z] = arm.get_position(0, pi/4,0);
-arm.goDirectlyTo(r,phi,z);
-pause(2);
-[r, phi, z] = arm.get_position(0, 0, pi/4);
-arm.goDirectlyTo(r,phi,z);
+for i = 0:4
+    pause(1);
+    fprintf('moving ellbow \n')
+    [r, phi, z] = arm.get_position(pi/4,pi/4,i*pi/16)
+    
+    [r, phi, z] = arm.read_position()
+end
+% for i = 0:4
+%     pause(1);
+%     [r, phi, z] = arm.get_position(pi/4,i*pi/16,pi/4);
+%     fprintf('moving shouldern \n')
+%     [r, phi, z] = arm.read_position()
+% end
+% for i = 0:4
+%     pause(1);
+%     [r, phi, z] = arm.get_position(i*pi/16,pi/4,pi/4);
+%     fprintf('moving base \n')
+%     [r, phi, z] = arm.read_position()
+% end
 %arm.goToPoint(r,phi,z);
 
 %   arm.openGripper();
