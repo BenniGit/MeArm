@@ -2,8 +2,8 @@ function [aSH,aEL] = correctangles(a1,a2)
 %CORRECTANGLES Summary of this function goes here
 %   Detailed explanation goes here
 
-if (a1>pi/2)
-    aSH = pi/2;
+if (a1>pi)
+    aSH = pi;
 elseif (a1<0)
     aSH = 0;
     %fprintf('AngleShoulder is smaller then zero %d \n',a1');

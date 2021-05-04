@@ -31,6 +31,10 @@ else
     a1 = phiB + phiSHI;
     a2 = pi - a1 - phi12;
     [a1,a2] = correctangles(a1,a2);
+    a1 = pi-a1;
+    a2 = map(a2,0,pi/2,pi,pi/2);
+    fprintf('Shoulder Angle in solve method %d \n',a1);
+    fprintf('Elbow Angle in solve method %d \n',a2);
 end
 
 

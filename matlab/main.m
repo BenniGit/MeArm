@@ -3,8 +3,27 @@ clear all port
 clc
 close all
 
-arm = MeArm('D4','D5','D6','D9');
-[r, phi, z] = arm.get_position(0,0, pi/4)
+arm = MeArm('D4','D6','D5','D9');
+
+while 1
+pause(0.2);
+poti = arm.readPoti();
+distance = arm.readDistance();
+bool = arm.readButton();
+
+if bool == 1
+    arm.openGripper();
+    
+else
+    arm.closeGripper();
+    
+end
+
+
+arm.goDirectlyTo(40+300*poti,pi,-30+110*distance);
+end
+
+%[r, phi, z] = arm.get_position(0,0, pi/4)
 % pause(1);
 % arm.goToPoint(60,pi,80);
 % 
@@ -13,7 +32,7 @@ arm = MeArm('D4','D5','D6','D9');
 % [r,phi,z] = arm.read_position()
 % pause(1);
 % for i = 1:10
-arm.goDirectlyTo(80,pi/2,50);
+%arm.goDirectlyTo(80,pi/2,50);
 %     [r,phi,z] = arm.read_position()
 %     pause(1);
 % end
@@ -23,15 +42,23 @@ arm.goDirectlyTo(80,pi/2,50);
 % pause(2);
 % [r, phi, z] = arm.get_position(0, pi/4,0);
 % arm.goDirectlyTo(r,phi,z);
-[r, phi, z] = arm.get_position(pi/4,pi/4,pi/4);
-arm.goDirectlyTo(r,phi,z);
-for i = 0:4
-    pause(1);
-    fprintf('moving ellbow \n')
-    [r, phi, z] = arm.get_position(pi/4,pi/4,i*pi/16)
-    
-    [r, phi, z] = arm.read_position()
-end
+% [r, phi, z] = arm.get_position(pi/4,pi/4,pi/4);
+% arm.goDirectlyTo(200,pi,50);
+% pause(1);
+% arm.goDirectlyTo(100,pi/2,40);
+% for i = 3:5
+%     pause(1);
+%     fprintf('DH');
+%     
+%     [r,phi,z] = arm.get_position(pi,pi/2,i*pi/8)
+%     fprintf('Read');
+%     [r,phi,z] = arm.read_position()
+%     %arm.goToPoint(15*i,0,50);
+%     %arm.goDirectlyTo(160,pi,20*i);
+%     
+%     %[r, phi, z] = arm.read_position()
+%     
+% end
 % for i = 0:4
 %     pause(1);
 %     [r, phi, z] = arm.get_position(pi/4,i*pi/16,pi/4);

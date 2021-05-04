@@ -5,13 +5,15 @@ classdef MeArm
     properties
         minPulse = 5.44e-04;
         maxPulse = 2.40e-03;
+        a;
         base;
         shoulder;
         elbow;
         gripper;
-        r
-        phi
-        z
+        ultrasonic;
+        r;
+        phi;
+        z;
     end
     
     methods
@@ -21,18 +23,37 @@ classdef MeArm
             %create the arduino and servo objects in matlab
             port='COM5';
             board='Uno';
-            a = arduino(port, board,'libraries','servo');
-            obj.base = servo(a, pinBase, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
-            obj.shoulder = servo(a, pinShoulder, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
-            obj.elbow = servo(a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
-            obj.gripper = servo(a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
+            obj.a = arduino(port, board,'libraries',{'servo','Ultrasonic'});
+            obj.ultrasonic = ultrasonic(obj.a,'D12','D13');
+            obj.base = servo(obj.a, pinBase, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
+            obj.shoulder = servo(obj.a, pinShoulder, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
+            obj.elbow = servo(obj.a, pinElbow, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
+            obj.gripper = servo(obj.a, pinGripper, 'MinPulseDuration', obj.minPulse, 'MaxPulseDuration', obj.maxPulse);
             obj.r = 50;
-            obj.phi = pi/2;
+            obj.phi = pi;
             obj.z = 40;
             %% first move
             %obj.goToPoint(50, pi/2, 40);
             %obj.openGripper();
         end
+        function value = readDistance(obj)
+            distance = readDistance(obj.ultrasonic);
+            if distance > 0.5
+                distance = 0.5;
+            end
+            value = distance / 0.5;
+            
+        end
+        
+        function bool = readButton(obj)
+            bool = readDigitalPin(obj.a,'D11');
+        end
+        
+        function value = readPoti(obj)
+            value = readVoltage(obj.a,'A1');
+            value = map(value,0.2,4.8,0,1);
+        end
+        
         
         function move = goDirectlyTo(obj,r, phi, z)
             %METHOD1 Summary of this method goes here
@@ -49,10 +70,14 @@ classdef MeArm
                 %fprintf('radbase: %d \n', radBase);
                 writePosition(obj.base, angle2val(radBase))
                 %fprintf('Value_base: %d \n', angle2val(radBase));
-                writePosition(obj.shoulder, 0.5+angle2val(radShoulder))
-                writePosition(obj.elbow, 0.5+angle2val(radElbow))
+                writePosition(obj.shoulder, angle2val(radShoulder))
+                fprintf('Value_Shoulder: %d \n', angle2val(radShoulder));
+                writePosition(obj.elbow, angle2val(radElbow))
                 pause(0.05)
-                [obj.r,obj.phi,obj.z] = obj.read_position();
+                [r_1,phi_1,z_1] = obj.read_position();
+                obj.set_r(r_1);
+                obj.set_phi(phi_1);
+                obj.set_z(z_1);
             else
                 move = 0;
                 fprintf('out of reach \n');
@@ -102,7 +127,10 @@ classdef MeArm
         
         function [r, phi, z] = get_position(obj, j1, j2, j3)
 %             j = [j1 j2 j3 0;0 0 0 0;0 80 80 68; pi/2 0 0 0];
-            j = [j1 j2 j3 -(j2+j3);0 0 0 0;0 80 80 68; pi/2 0 0 0];
+            q1 = j1;
+            q2 = j2;
+            q3 = pi-j2-j3;
+            j = [q1 q2 -(q2+q3) q3;0 0 0 0;0 80 80 68; pi/2 0 0 0];
             FK = DHkine(j);
             Q = FK(:,4);
             x = Q(1);
@@ -110,20 +138,36 @@ classdef MeArm
             z = Q(3);
             [r,phi] = cart2polar(x,y);
             writePosition(obj.base,angle2val(j1));
-            writePosition(obj.shoulder,0.5+angle2val(j2));
-            writePosition(obj.elbow,1-angle2val(j2)-angle2val(j3));
+            writePosition(obj.shoulder,map(j2,0,pi,1,0));
+            angle_elbow = pi - j2 -j3;
+            if angle_elbow>pi/2
+                fprintf('DH angle out of reach');
+            else   
+            writePosition(obj.elbow,map(angle_elbow,0,pi/2,1,0.5));
+            end
         end
         
         function [r,phi,z] = read_position(obj)
             a0 = readPosition(obj.base);
-            fprintf('a0 = %d \n',a0);
+            %fprintf('a0 = %d \n',a0);
             a1 = readPosition(obj.shoulder);
-            fprintf('a1 = %d \n',a1);
+            %fprintf('a1 = %d \n',a1);
             a2 = readPosition(obj.elbow);
-            fprintf('a2 = %d \n',a2);
+            %fprintf('a2 = %d \n',a2);
             [r,phi,z] = unsolve(a0,a1,a2);
         end
         
+        function obj = set_r(obj,value)
+            obj.r = value;
+        end
+        function obj = set_phi(obj,value)
+            obj.phi = value;
+        end
+        function obj = set_z(obj,value)
+            obj.z = value;
+        end
+        
+
     end
 end
 

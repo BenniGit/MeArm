@@ -10,8 +10,8 @@ L2=80; %elbow to wrise length
 L3=68; %Length from wrist to hand PLUS base centre to shoulder
 
 a0 = a0*pi;
-a1 = a1*pi-pi/2;
-a2 = a2*pi-pi/2;
+a1 = map(a1,0,1,pi,0);
+a2 = map(a2,0.5,1,pi/2,0);
 
 %% Main
 
