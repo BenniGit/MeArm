@@ -127,6 +127,12 @@ classdef MeArm
         
         function [r, phi, z] = get_position(obj, j1, j2, j3)
 %             j = [j1 j2 j3 0;0 0 0 0;0 80 80 68; pi/2 0 0 0];
+            if j2>pi   % check if is working (should do the same as correctangles to adjust position of joints to realistic values)
+                j2 = pi;
+            end
+            if j3>pi/2
+                j3 = pi/2;
+            end
             q1 = j1;
             q2 = j2;
             q3 = pi-j2-j3;
