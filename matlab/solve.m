@@ -43,8 +43,6 @@ if (bool == 0)
     a1 = nan;
     a2 = nan;
 else
-    % a0 is directly phi
-    a0 = phi;
     %fprintf('Base Angle in solve method %d \n',a0);
     
     % a1 is the sum of phiB and phiSHI
@@ -54,7 +52,7 @@ else
     a2 = pi - a1 - phi12;
     % these function is going to make sure that the angles will be 
     % in the working range of the robot
-    [a1,a2] = correctangles(a1,a2);
+    [a0,a1,a2] = correctangles(phi,a1,a2);
     % This is a correction we had to add because if the angle is zero
     % the servo has to at the position 1. So that's just the inverse
     a1 = pi-a1;

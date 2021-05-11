@@ -51,16 +51,28 @@ classdef MeArm
             % read the Distance of the ultrasonic sensor
             distance = readDistance(obj.ultrasonic);
             % Working range between 0 cm and 20 cm
-            if distance > 0.2
-                distance = 0.2;
+            if distance > 0.4
+                distance = 0.4;
             end
             % Correct the Value to a value from 0 to 1
-            value = distance / 0.2;            
+            value = distance / 0.4;            
         end
         %% read Button method
         function bool = readButton(obj)
             % is the Button pressed 0 or 1
             bool = readDigitalPin(obj.a,'D11');
+        end
+        %% read Photoresistor method
+        function bool = readPhr(obj)
+            % is the Button pressed 0 or 1
+            value = readVoltage(obj.a,'A0');
+            value = map(value,1,3,0,1);
+            if value>=0.3
+                bool = 1;
+            else
+                bool = 0;
+            end
+                    
         end
         %% read Poti method
         function value = readPoti(obj)
@@ -119,13 +131,11 @@ classdef MeArm
         function closeGripper(obj)
             % closeGripper will close the gripping Joint of the MeArm
             writePosition(obj.gripper, 0.1);
-            pause(0.3);
         end
         %% open Gripper method
         function openGripper(obj)
             % closeGripper will open the gripping Joint of the MeArm
             writePosition(obj.gripper,0.5);
-            pause(0.3);
         end
         %% get position method
         function [r, phi, z] = get_position(obj, j1, j2, j3)

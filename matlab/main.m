@@ -4,13 +4,27 @@ clc
 close all
 
 arm = MeArm('D4','D6','D5','D9');
-
+potiRadius = 50;
+potiPhi = 0;
 while 1
-pause(0.2);
+% pause(0.2);
 poti = arm.readPoti();
 distance = arm.readDistance();
 bool = arm.readButton();
-
+step = arm.readPhr()
+if step == 0
+    potiRadius = 40+300*poti; 
+else
+    potiPhi = poti*pi;
+end
+arm.goDirectlyTo(potiRadius,potiPhi,-30+110*distance);
+% [r,phi,z] = arm.read_position();
+% if step ==0    
+%     arm.goDirectlyTo(r,(phi+pi/32),z);
+% elseif step == 1
+%     arm.goDirectlyTo(r,(phi-pi/32),z);
+% end
+    
 if bool == 1
     arm.openGripper();
     
@@ -20,7 +34,7 @@ else
 end
 
 
-arm.goDirectlyTo(40+300*poti,pi,-30+110*distance);
+
 end
 
 %[r, phi, z] = arm.get_position(0,0, pi/4)
