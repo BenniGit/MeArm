@@ -3,37 +3,44 @@ clear all port
 clc
 close all
 
+% MIDI
+controlNumbers = [1001,1002,1003,1024];
+initialValue = 0.5;
+midicontrolsObject = midicontrols(controlNumbers,initialValue);
+
+%MeArm
 arm = MeArm('D4','D6','D5','D9');
 potiRadius = 50;
 potiPhi = 0;
+
 while 1
-% pause(0.2);
-poti = arm.readPoti();
+midivalues = midiread(midicontrolsObject);
+knob1 = midivalues(1);
+knob2 = midivalues(2);
+% knob3 = midivalues(3);
+button = midivalues(4);
+
+% poti = arm.readPoti();
 distance = arm.readDistance();
-bool = arm.readButton();
-step = arm.readPhr()
-if step == 0
-    potiRadius = 40+300*poti; 
-else
-    potiPhi = poti*pi;
-end
-arm.goDirectlyTo(potiRadius,potiPhi,-30+110*distance);
-% [r,phi,z] = arm.read_position();
-% if step ==0    
-%     arm.goDirectlyTo(r,(phi+pi/32),z);
-% elseif step == 1
-%     arm.goDirectlyTo(r,(phi-pi/32),z);
+% bool = arm.readButton();
+% step = arm.readPhr()
+% if step == 0
+%     potiRadius = 40+300*poti; 
+% else
+%     potiPhi = poti*pi;
 % end
+potiRadius = 40+300*knob2; 
+potiPhi = knob1*pi;
+
+
+arm.goDirectlyTo(potiRadius,potiPhi,-30+110*distance);
     
-if bool == 1
-    arm.openGripper();
-    
-else
+if button == 1
     arm.closeGripper();
     
+else
+    arm.openGripper();    
 end
-
-
 
 end
 
